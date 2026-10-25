@@ -10,7 +10,7 @@ Short-term (1-hour-ahead) wind speed forecasting from 10-minute wind turbine SCA
 
 **Live demo:** https://rishabh-bgp.github.io/cnn-bilstm-attention-real-scada/ (runs entirely in your browser on synthetic data)
 
-**About the demo design.** The page uses a Daoist, Chinese-ink style: crimson, charcoal and navy with gold accents, brush-style headings in the Ma Shan Zheng font, and charts drawn in gold, red and ink. Each repository has its own trigram. This one is **震 ☳ (Zhèn, Thunder)**. 震 (Zhèn) is thunder: movement and arousal. It stands for the turbine's spinning rotor and the live stream of SCADA readings. The red seal stamp (印) carries the initials RA, the faint taiji and the row of eight Bagua trigrams stand for balance and change, the cloud scrolls stand for moving air, and the vertical motto 雷動風行 means "Thunder stirs, the wind follows". The design is purely decorative. Everything is computed by the model shown, on synthetic data.
+**About the demo design.** The page uses a Daoist, Chinese-ink style: crimson, charcoal and navy with gold accents, brush-style headings in the Ma Shan Zheng font, and charts drawn in gold, red and ink. Each repository has its own trigram. This one is **震 ☳ (Zhèn, Thunder)**. 震 (Zhèn) is thunder: movement and arousal. It stands for the turbine's spinning rotor and the live stream of SCADA readings. The red seal stamp (印) carries the initials RA, the faint taiji and the row of eight Bagua trigrams stand for balance and change, and the vertical motto 雷動風行 means "Thunder stirs, the wind follows". The design is purely decorative. Everything is computed by the model shown, on synthetic data.
 
 ## What this repository implements
 
