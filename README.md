@@ -1,25 +1,27 @@
-<a href="https://rishabh-bgp.github.io/cnn-bilstm-attention-real-scada/"><img src="docs/img/banner.png" width="100%" alt="Banner: CNN-BiLSTM-Attention Wind Speed Forecasting on Wind Turbine SCADA Data, with a red seal stamp and a Bagua trigram"></a>
+<p align="center"><img src="docs/img/banner.png" alt="CNN–BiLSTM–Attention (turbine SCADA): Daoist-style banner, reference implementation by Rishabh Aryan" width="100%"></p>
 
-# CNN-BiLSTM-Attention Wind Speed Forecasting on Wind Turbine SCADA Data (PyTorch)
+# CNN-BiLSTM-Attention Wind Speed Forecasting on Wind Turbine SCADA Data (Reference Implementation)
 
-[![Live demo](https://img.shields.io/badge/Live%20demo-GitHub%20Pages-B3121B)](https://rishabh-bgp.github.io/cnn-bilstm-attention-real-scada/) [![CI](https://github.com/Rishabh-bgp/cnn-bilstm-attention-real-scada/actions/workflows/ci.yml/badge.svg)](https://github.com/Rishabh-bgp/cnn-bilstm-attention-real-scada/actions/workflows/ci.yml) [![Open in Colab](https://img.shields.io/badge/Open%20in-Colab-D4A64A)](https://colab.research.google.com/github/Rishabh-bgp/cnn-bilstm-attention-real-scada/blob/main/notebooks/walkthrough.ipynb) [![License: MIT](https://img.shields.io/badge/License-MIT-D4A64A.svg)](LICENSE) ![Python 3.12](https://img.shields.io/badge/python-3.12-111214) ![Data: synthetic](https://img.shields.io/badge/data-synthetic-111214)
+[![Live demo](https://img.shields.io/badge/Live%20demo-GitHub%20Pages-b3121b)](https://rishabh-bgp.github.io/cnn-bilstm-attention-real-scada/) [![CI](https://github.com/Rishabh-bgp/cnn-bilstm-attention-real-scada/actions/workflows/ci.yml/badge.svg)](https://github.com/Rishabh-bgp/cnn-bilstm-attention-real-scada/actions/workflows/ci.yml) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Rishabh-bgp/cnn-bilstm-attention-real-scada/blob/main/notebooks/walkthrough.ipynb) [![License: MIT](https://img.shields.io/badge/License-MIT-d4af37.svg)](LICENSE) ![Python 3.12](https://img.shields.io/badge/python-3.12-1a1a1a) ![Data: synthetic](https://img.shields.io/badge/data-synthetic-1a1a1a)
+
+> **Reference implementation.** This is the reference implementation of my paper (R. Aryan and T. Hiwarkar), rebuilt in Python on synthetic data because the original data is confidential. Results will differ from the published numbers.
+
+**Keywords:** attention mechanism, bilstm, cnn bilstm, deep learning, lstm, machine learning, pytorch, renewable energy, scada, time series forecasting, wind energy, wind speed forecasting, wind turbine
+
+## Paper · 論文
+
+R. Aryan and T. Hiwarkar, "Hybrid deep learning models with attention mechanisms for short-term wind speed forecasting: A comprehensive review and benchmarking of CNN–BiLSTM–Attention on real SCADA data," *IJMEC*, 2026. [Online]. Available: https://ijmec.com/index.php/multidisciplinary/article/view/1079
 
 **CNN–BiLSTM–Attention (turbine SCADA)** is the reference implementation of my paper on CNN–BiLSTM–Attention wind speed forecasting on wind turbine SCADA data. The paper proposes applying the **CNN–BiLSTM–Attention** hybrid to **real SCADA data** from an Indian onshore wind turbine (52,592 ten-minute records from 2018, resampled to 8,760 hours). This repository runs on synthetic data because the real data is confidential. It compares the hybrid with ARIMA, SVR, XGBoost, Random Forest and LSTM for next-hour wind speed, and adds seasonal decomposition, residual diagnostics, Diebold–Mariano tests and wind-regime stratified errors.
 
-<a href="https://rishabh-bgp.github.io/cnn-bilstm-attention-real-scada/"><img src="docs/img/demo.png" width="100%" alt="Screenshot of the Daoist-style live demo for cnn-bilstm-attention-real-scada: red and gold page with the 震 (Zhèn, thunder) trigram, a forecast chart on synthetic data compared with persistence, and input sliders"></a>
-
-**Live demo:** https://rishabh-bgp.github.io/cnn-bilstm-attention-real-scada/ (runs entirely in your browser on synthetic data)
-
-**About the demo design.** The page uses a Daoist, Chinese-ink style: crimson, charcoal and navy with gold accents, brush-style headings in the Ma Shan Zheng font, and charts drawn in gold, red and ink. Each repository has its own trigram. This one is **震 ☳ (Zhèn, Thunder)**. 震 (Zhèn) is thunder: movement and arousal. It stands for the turbine's spinning rotor and the live stream of SCADA readings. The red seal stamp (印) carries the initials RA, the faint taiji and the row of eight Bagua trigrams stand for balance and change, and the vertical motto 雷動風行 means "Thunder stirs, the wind follows". The design is purely decorative. Everything is computed by the model shown, on synthetic data.
-
-## What this repository implements
+## Method · 方法
 
 - A **SCADA CSV loader**: 10-minute records are mean-aggregated to hourly (52,592 -> 8,760 in the paper), gaps (~0.2 %) linearly interpolated, chronological 80/20 split (7,008 / 1,752).
 - **CNN-BiLSTM-Attention** vs **ARIMA** (AIC), **SVR** (RBF), **XGBoost** (grid search), **Random Forest** (300 trees), **LSTM** (64 units).
 - MAE, RMSE, MAPE, R2; Ljung-Box (lag 24), Shapiro-Wilk, Breusch-Pagan; Diebold-Mariano; wind-regime stratified RMSE.
 - `scripts/seasonal_decomposition.py`: additive seasonal decomposition (trend / seasonal / residual) as in Section 4.3.
 
-## 架構 · Architecture
+## Architecture · 架構
 
 ```
 input  : last 24 hourly wind speeds (min-max scaled, scaler fit on train only)
@@ -33,48 +35,7 @@ Training: Adam (lr 0.001), MSE loss, batch 32, up to 100 epochs, early stopping 
 Data split: chronological 80 % train / 20 % test; 24 -> 1 sliding window.
 Target: every learned model (deep and shallow) predicts the **change from the last reading** (`target: delta` in the config; set `target: level` to predict the value directly). Persistence is the special case where the predicted change is zero.
 
-## Quick start
-
-```bash
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-python train.py --quick      # smoke test: 3 epochs, short series, small grids
-python train.py              # full run with the paper's settings
-python -m pytest -q          # tests (incl. JS-vs-Python demo check; needs Node.js)
-```
-
-Outputs in `results/`: `metrics.csv` (MAE, RMSE, MAPE, R2 per model), `predictions.csv`,
-`details.json` (Diebold-Mariano tests vs the hybrid, Ljung-Box / Shapiro-Wilk / Breusch-Pagan
-residual diagnostics, wind-regime stratified RMSE, RMSE reduction %, loss curves).
-
-Repository layout:
-
-```
-src/windforecast/  data.py (loader, synthetic generator, windowing, scaling)
-                   models.py (CNN-BiLSTM-Attention and baselines)
-                   metrics.py, stats.py (DM test, residual diagnostics)
-                   experiment.py (end-to-end runner)
-configs/default.yaml   train.py   tests/   notebooks/walkthrough.ipynb
-scripts/make_synthetic_data.py   scripts/export_demo_model.py   demo/ (GitHub Pages source)
-data/synthetic/synthetic_scada.csv (SYNTHETIC)
-```
-
-## Notebook
-
-[![Open in Colab](https://img.shields.io/badge/Open%20in-Colab-D4A64A)](https://colab.research.google.com/github/Rishabh-bgp/cnn-bilstm-attention-real-scada/blob/main/notebooks/walkthrough.ipynb)
-
-[`notebooks/walkthrough.ipynb`](notebooks/walkthrough.ipynb) is a beginner-friendly, self-contained version of the code, with explanations in plain words. It runs in Colab or in Anaconda Jupyter on Windows, macOS or Linux:
-
-1. Load the synthetic SCADA-style CSV (local file, else download from GitHub, else generate it).
-2. Fill gaps and split 80/20 by time.
-3. Scale to [0, 1], fitting the scaler on training data only.
-4. Turn the series into 24-hour input windows with a 1-hour target.
-5. Build the CNN–BiLSTM–Attention model.
-6. Train it briefly (up to 20 epochs with early stopping).
-7. Compare MAE, RMSE, MAPE and R² with a persistence baseline.
-8. Plot actual vs predicted.
-
-## 數據 · Data
+## Data · 數據
 
 **The real SCADA data used in the paper is confidential and is not included in this repository. Only the synthetic CSV (`data/synthetic/synthetic_scada.csv`) is used here.**
 
@@ -88,7 +49,21 @@ is not, and will never be, included in this repository).
   with columns `timestamp,wind_speed` (other names: set `timestamp_col` / `wind_col`; 10-minute data is mean-resampled to hourly), and point `data.csv` in `configs/default.yaml` at it. Everything in `data/` except the
   committed synthetic CSV is git-ignored, so your file will not be committed.
 
-## 結果 · Results (honest, synthetic data)
+## How to run · 執行
+
+```bash
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python train.py --quick      # smoke test: 3 epochs, short series, small grids
+python train.py              # full run with the paper's settings
+python -m pytest -q          # tests (incl. JS-vs-Python demo check; needs Node.js)
+```
+
+Outputs in `results/`: `metrics.csv` (MAE, RMSE, MAPE, R2 per model), `predictions.csv`,
+`details.json` (Diebold-Mariano tests vs the hybrid, Ljung-Box / Shapiro-Wilk / Breusch-Pagan
+residual diagnostics, wind-regime stratified RMSE, RMSE reduction %, loss curves).
+
+## Results (synthetic data only) · 結果
 
 These results come from the same synthetic dataset as [01](https://github.com/Rishabh-bgp/cnn-bilstm-attention-synthetic-scada), not real SCADA data.
 
@@ -117,12 +92,52 @@ Does CNN–BiLSTM–Attention beat persistence? RMSE 0.762 vs 0.764 m/s (beats p
 
 Does it beat persistence? RMSE 0.771 vs 0.795 m/s (beats persistence), MAE 0.614 vs 0.617 m/s (beats persistence). On this smooth synthetic series, persistence is a strong baseline, so any gain is modest.
 
-## Reference implementation note
+## Live demo · 演示
 
-> **Reference implementation.** This repository is a reference implementation of my own paper (cited below), rebuilt in Python and run on synthetic data because the original SCADA data is confidential. Results from this code will differ from the numbers published in the paper, and this repository does not claim to reproduce them.
+<a href="https://rishabh-bgp.github.io/cnn-bilstm-attention-real-scada/"><img src="docs/img/demo.png" width="100%" alt="Screenshot of the Daoist-style live demo for cnn-bilstm-attention-real-scada: red and gold page with the 震 (Zhèn, thunder) trigram, a forecast chart on synthetic data compared with persistence, and input sliders"></a>
 
-### Assumptions and deviations from the paper
+**Live demo:** https://rishabh-bgp.github.io/cnn-bilstm-attention-real-scada/ (runs entirely in your browser on synthetic data)
 
+**About the demo design.** The page uses a Daoist, Chinese-ink style: crimson, charcoal and navy with gold accents, brush-style headings in the Ma Shan Zheng font, and charts drawn in gold, red and ink. Each repository has its own trigram. This one is **震 ☳ (Zhèn, Thunder)**. 震 (Zhèn) is thunder: movement and arousal. It stands for the turbine's spinning rotor and the live stream of SCADA readings. The red seal stamp (印) carries the initials RA, the faint taiji and the row of eight Bagua trigrams stand for balance and change, and the vertical motto 雷動風行 means "Thunder stirs, the wind follows". The design is purely decorative. Everything is computed by the model shown, on synthetic data.
+
+## Notebook · 筆記本
+
+[`notebooks/walkthrough.ipynb`](notebooks/walkthrough.ipynb) is a beginner-friendly, self-contained version of the code, with explanations in plain words. It runs in Colab or in Anaconda Jupyter on Windows, macOS or Linux:
+
+1. Load the synthetic SCADA-style CSV (local file, else download from GitHub, else generate it).
+2. Fill gaps and split 80/20 by time.
+3. Scale to [0, 1], fitting the scaler on training data only.
+4. Turn the series into 24-hour input windows with a 1-hour target.
+5. Build the CNN–BiLSTM–Attention model.
+6. Train it briefly (up to 20 epochs with early stopping).
+7. Compare MAE, RMSE, MAPE and R² with a persistence baseline.
+8. Plot actual vs predicted.
+
+## Tests · 測試
+
+`python -m pytest -q` runs the tests in `tests/`:
+
+- `test_windows_and_no_leak`: 24-hour windows are built correctly, with no leakage from the test period.
+- `test_metrics_perfect`: the metrics give the exact values for a perfect forecast.
+- `test_js_and_python_predictions_match`: the browser demo's JavaScript model gives the same predictions as Python (needs Node.js).
+
+CI runs the same tests on Python 3.12 on every push.
+
+## Repository layout · 結構
+
+```
+src/windforecast/  data.py (loader, synthetic generator, windowing, scaling)
+                   models.py (CNN-BiLSTM-Attention and baselines)
+                   metrics.py, stats.py (DM test, residual diagnostics)
+                   experiment.py (end-to-end runner)
+configs/default.yaml   train.py   tests/   notebooks/walkthrough.ipynb
+scripts/make_synthetic_data.py   scripts/export_demo_model.py   demo/ (GitHub Pages source)
+data/synthetic/synthetic_scada.csv (SYNTHETIC)
+```
+
+## Limitations · 局限
+
+- All results come from synthetic data, so they say nothing about the published results or about real turbines.
 - The original 2018 Indian SCADA data is not available, so real-data results depend on whichever SCADA file you supply; without it the code runs on synthetic data.
 - The paper reports ARIMA RMSE = 7.569 m/s with negative R2, which suggests a static multi-step forecast over the whole test year. This code uses rolling one-step ARIMA forecasts (comparable with the other 1-step models), so ARIMA will look much stronger here. Set `models` to change what is compared.
 - Grids for SVR / XGBoost are assumptions.
@@ -132,50 +147,56 @@ Does it beat persistence? RMSE 0.771 vs 0.795 m/s (beats persistence), MAE 0.614
 - MAPE ignores hours with |y| < 0.1 m/s to avoid division by ~0 (handling not stated).
 - ARIMA is evaluated as rolling one-step-ahead forecasts (parameters fit on train only), matching the 1-step horizon of the other models.
 
-## Citation
+## License · 許可證
 
-R. Aryan and T. Hiwarkar, "Hybrid deep learning models with attention mechanisms for short-term wind speed forecasting: A comprehensive review and benchmarking of CNN–BiLSTM–Attention on real SCADA data," *IJMEC*, 2026. [Online]. Available: https://ijmec.com/index.php/multidisciplinary/article/view/1079
+MIT © 2026 Rishabh Aryan. See [LICENSE](LICENSE). The paper itself remains under its publisher's terms.
 
-## License
-
-MIT License, © 2026 Rishabh Aryan. See [`LICENSE`](LICENSE).
-
-## M.Tech Thesis Work in AI and Data Science, IIIT Bhagalpur
+## M.Tech Thesis Work in AI and Data Science, IIIT Bhagalpur · 學位論文
 
 *An Investigation into Advanced Techniques for Wind Speed Forecasting with Applications to Renewable Energy Grid Integration*
 
 This repository is part of my M.Tech thesis work.
 
-**1. Quantum and hybrid quantum ML**
+### Quantum and hybrid quantum machine learning
 
-- 08 ☰ [hybrid-vqc-wind-speed-forecasting](https://github.com/Rishabh-bgp/hybrid-vqc-wind-speed-forecasting) · [live demo](https://rishabh-bgp.github.io/hybrid-vqc-wind-speed-forecasting/)
-- 10 ☵ [cbma-tn-vqc-wind-green-hydrogen](https://github.com/Rishabh-bgp/cbma-tn-vqc-wind-green-hydrogen) · [live demo](https://rishabh-bgp.github.io/cbma-tn-vqc-wind-green-hydrogen/)
-- 12 ☶ [hcq-lstm-clqgwo-wind-forecasting](https://github.com/Rishabh-bgp/hcq-lstm-clqgwo-wind-forecasting) · [live demo](https://rishabh-bgp.github.io/hcq-lstm-clqgwo-wind-forecasting/)
+| | Repository | Approach | Live |
+|---|---|---|---|
+| 08 ☰ 乾 Qian | [hybrid-vqc-wind-speed-forecasting](https://github.com/Rishabh-bgp/hybrid-vqc-wind-speed-forecasting) | Hybrid variational quantum circuit (Conv1D-LSTM + VQC) | [demo](https://rishabh-bgp.github.io/hybrid-vqc-wind-speed-forecasting/) |
+| 10 ☵ 坎 Kan | [cbma-tn-vqc-wind-green-hydrogen](https://github.com/Rishabh-bgp/cbma-tn-vqc-wind-green-hydrogen) | CNN-BiLSTM-multi-head attention + tensor network + VQC, green hydrogen | [demo](https://rishabh-bgp.github.io/cbma-tn-vqc-wind-green-hydrogen/) |
+| 12 ☶ 艮 Gen | [hcq-lstm-clqgwo-wind-forecasting](https://github.com/Rishabh-bgp/hcq-lstm-clqgwo-wind-forecasting) | Physics-informed hybrid classical-quantum LSTM tuned by a quantum-inspired grey wolf optimizer | [demo](https://rishabh-bgp.github.io/hcq-lstm-clqgwo-wind-forecasting/) |
 
-**2. Metaheuristic-optimized hybrids**
+### Metaheuristic-optimized hybrids
 
-- 04 ☷ [geoai-hybrid-ga-pso-anfis-wind-forecasting](https://github.com/Rishabh-bgp/geoai-hybrid-ga-pso-anfis-wind-forecasting) · [live demo](https://rishabh-bgp.github.io/geoai-hybrid-ga-pso-anfis-wind-forecasting/)
+| | Repository | Approach | Live |
+|---|---|---|---|
+| 04 ☷ 坤 Kun | [geoai-hybrid-ga-pso-anfis-wind-forecasting](https://github.com/Rishabh-bgp/geoai-hybrid-ga-pso-anfis-wind-forecasting) | GA-PSO-ANFIS-CNN-LSTM, probabilistic multi-site forecasting | [demo](https://rishabh-bgp.github.io/geoai-hybrid-ga-pso-anfis-wind-forecasting/) |
 
-**3. Deep learning with attention and gating**
+### Deep learning with attention and gating
 
-- 01 ☴ [cnn-bilstm-attention-synthetic-scada](https://github.com/Rishabh-bgp/cnn-bilstm-attention-synthetic-scada) · [live demo](https://rishabh-bgp.github.io/cnn-bilstm-attention-synthetic-scada/)
-- 02 ☳ [cnn-bilstm-attention-real-scada](https://github.com/Rishabh-bgp/cnn-bilstm-attention-real-scada) · [live demo](https://rishabh-bgp.github.io/cnn-bilstm-attention-real-scada/)
-- 03 ☰ [cnn-bilstm-attention-benchmarking-indian-scada](https://github.com/Rishabh-bgp/cnn-bilstm-attention-benchmarking-indian-scada) · [live demo](https://rishabh-bgp.github.io/cnn-bilstm-attention-benchmarking-indian-scada/)
-- 05 ☲ [xai-shap-lime-cnn-bilstm-attention-wind](https://github.com/Rishabh-bgp/xai-shap-lime-cnn-bilstm-attention-wind) · [live demo](https://rishabh-bgp.github.io/xai-shap-lime-cnn-bilstm-attention-wind/)
-- 06 ☲ [wind-forecasting-mathematical-formulations-validation](https://github.com/Rishabh-bgp/wind-forecasting-mathematical-formulations-validation) · [live demo](https://rishabh-bgp.github.io/wind-forecasting-mathematical-formulations-validation/)
-- 09+13 ☵ [wuweidl-daoist-gated-wind-forecasting](https://github.com/Rishabh-bgp/wuweidl-daoist-gated-wind-forecasting) · [live demo](https://rishabh-bgp.github.io/wuweidl-daoist-gated-wind-forecasting/)
-- 16 ☴ [rso-net-wind-grid-stabilization](https://github.com/Rishabh-bgp/rso-net-wind-grid-stabilization) · [live demo](https://rishabh-bgp.github.io/rso-net-wind-grid-stabilization/)
+| | Repository | Approach | Live |
+|---|---|---|---|
+| 01 ☴ 巽 Xun | [cnn-bilstm-attention-synthetic-scada](https://github.com/Rishabh-bgp/cnn-bilstm-attention-synthetic-scada) | CNN-BiLSTM-Attention validated on synthetic SCADA-style data | [demo](https://rishabh-bgp.github.io/cnn-bilstm-attention-synthetic-scada/) |
+| **02 ☳ 震 Zhen** | **[cnn-bilstm-attention-real-scada](https://github.com/Rishabh-bgp/cnn-bilstm-attention-real-scada) (this repo)** | **CNN-BiLSTM-Attention on wind turbine SCADA data** | **[demo](https://rishabh-bgp.github.io/cnn-bilstm-attention-real-scada/)** |
+| 03 ☰ 乾 Qian | [cnn-bilstm-attention-benchmarking-indian-scada](https://github.com/Rishabh-bgp/cnn-bilstm-attention-benchmarking-indian-scada) | CNN-BiLSTM-Attention benchmarked against ANN, LSTM, SVM and ARIMA-ANN | [demo](https://rishabh-bgp.github.io/cnn-bilstm-attention-benchmarking-indian-scada/) |
+| 05 ☲ 離 Li | [xai-shap-lime-cnn-bilstm-attention-wind](https://github.com/Rishabh-bgp/xai-shap-lime-cnn-bilstm-attention-wind) | CNN-BiLSTM-Attention explained with SHAP, LIME and attention | [demo](https://rishabh-bgp.github.io/xai-shap-lime-cnn-bilstm-attention-wind/) |
+| 06 ☲ 離 Li | [wind-forecasting-mathematical-formulations-validation](https://github.com/Rishabh-bgp/wind-forecasting-mathematical-formulations-validation) | Equations and statistical validation of six forecasting models | [demo](https://rishabh-bgp.github.io/wind-forecasting-mathematical-formulations-validation/) |
+| 09+13 ☵ 坎 Kan | [wuweidl-daoist-gated-wind-forecasting](https://github.com/Rishabh-bgp/wuweidl-daoist-gated-wind-forecasting) | WuWeiDL: Daoist-inspired turbulence-gated attention | [demo](https://rishabh-bgp.github.io/wuweidl-daoist-gated-wind-forecasting/) |
+| 16 ☴ 巽 Xun | [rso-net-wind-grid-stabilization](https://github.com/Rishabh-bgp/rso-net-wind-grid-stabilization) | RSO-Net: TCN-attention probabilistic forecasting for grid stabilization | [demo](https://rishabh-bgp.github.io/rso-net-wind-grid-stabilization/) |
 
-**4. IoT, automation and multi-agent systems**
+### IoT, automation and multi-agent systems
 
-- 14 ☳ [iot-n8n-wind-turbine-predictive-maintenance](https://github.com/Rishabh-bgp/iot-n8n-wind-turbine-predictive-maintenance) · [live demo](https://rishabh-bgp.github.io/iot-n8n-wind-turbine-predictive-maintenance/)
-- 15 ☱ [multi-agent-turbine-fleet-chief-of-staff](https://github.com/Rishabh-bgp/multi-agent-turbine-fleet-chief-of-staff) · [live demo](https://rishabh-bgp.github.io/multi-agent-turbine-fleet-chief-of-staff/)
+| | Repository | Approach | Live |
+|---|---|---|---|
+| 14 ☳ 震 Zhen | [iot-n8n-wind-turbine-predictive-maintenance](https://github.com/Rishabh-bgp/iot-n8n-wind-turbine-predictive-maintenance) | IoT predictive maintenance with forecasting, FastAPI and n8n | [demo](https://rishabh-bgp.github.io/iot-n8n-wind-turbine-predictive-maintenance/) |
+| 15 ☱ 兌 Dui | [multi-agent-turbine-fleet-chief-of-staff](https://github.com/Rishabh-bgp/multi-agent-turbine-fleet-chief-of-staff) | Multi-agent chief of staff for turbine fleet operations | [demo](https://rishabh-bgp.github.io/multi-agent-turbine-fleet-chief-of-staff/) |
 
-**5. Statistical time-series models**
+### Statistical time-series models
 
-- 07 ☵ [arima-sarima-wind-speed-chennai](https://github.com/Rishabh-bgp/arima-sarima-wind-speed-chennai) · [live demo](https://rishabh-bgp.github.io/arima-sarima-wind-speed-chennai/)
+| | Repository | Approach | Live |
+|---|---|---|---|
+| 07 ☵ 坎 Kan | [arima-sarima-wind-speed-chennai](https://github.com/Rishabh-bgp/arima-sarima-wind-speed-chennai) | ARIMA and SARIMA for daily wind speed in Chennai | [demo](https://rishabh-bgp.github.io/arima-sarima-wind-speed-chennai/) |
 
-## Other repositories by Rishabh Aryan
+## Other repositories by Rishabh Aryan · 其他
 
 - [100-days-of-python](https://github.com/Rishabh-bgp/100-days-of-python)
 - [Agentic-Engineering-Ebook](https://github.com/Rishabh-bgp/Agentic-Engineering-Ebook)
