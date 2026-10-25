@@ -90,6 +90,8 @@ is not, and will never be, included in this repository).
 
 ## 結果 · Results (honest, synthetic data)
 
+These results come from the same synthetic dataset as [01](https://github.com/Rishabh-bgp/cnn-bilstm-attention-synthetic-scada), not real SCADA data.
+
 These are the real numbers from runs on the **synthetic** CSV. They are not the paper's results, and they are not tuned to match them. Every learned model predicts the **change from the last reading**, so persistence (change = 0) is the honest baseline to beat.
 
 **1. Smoke test** (`python train.py --quick`: first 2,000 hours, 3 epochs, small hyper-parameter grids; test = last 400 hours):
